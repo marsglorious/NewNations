@@ -1,0 +1,52 @@
+name: NewNations
+main: newnations.NewNations
+version: 0.1
+description: Town and nation management system with an inbuilt war engine.
+authors: [marsglorious, Macus17]
+[depends]: PermissionsBukkit
+depend: [WorldEdit]
+softdepend: [Vault]
+loadbefore: [Vault]
+
+commands:
+  claim:
+    description: Claims land for your nation.
+    usage: /claim
+    permission: newnations.player
+  raze:
+    description: Razes a plot of land.
+    usage: /raze
+    permission: newnations.player
+  nation:
+    description: Nation manipulation commands
+    usage: /nation
+    permission: newnations.player
+  town:
+    description: Town manipulation commands
+    usage: /town
+    permission: newnations.player
+  nadmin:
+    description: Admin manipulation commands
+    usage: /nadmin
+    permission: newnations.admin
+  siege:
+    description: Declare a new siege or join an existing one
+    usage: /siege [town]
+    permission: newnations.player
+  warcamp:
+    description: Set the location of your town's warcamp to your location
+    usage: /warcamp
+    permission: newnations.player
+  surrender:
+    description: Withdraw from the current siege and pay the costs
+    usage: /surrender
+    permission: newnations.player
+  alliance:
+    description: Alliance manipulation commands
+    usage: /alliance
+    permission: newnations.player    
+
+permissions:
+    newnations.player:
+        description: Flags the user as an accepted nations player.
+        default: true

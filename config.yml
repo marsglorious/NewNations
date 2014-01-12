@@ -1,0 +1,14 @@
+emeraldValue: 100
+townSetupFee: 200
+siegeFee: 1000
+warcampFee: 300
+tribute: 1000
+besiegeLightning: true
+removeEmptyTowns: true
+
+siegeDeathLimit: 4
+siegeDefenderLifeCount: 6
+siegeBesiegerLifeCount: 5
+siegeBuffer: 10
+tributeDeathThreshold: 6
+immunityPeriod: 120
