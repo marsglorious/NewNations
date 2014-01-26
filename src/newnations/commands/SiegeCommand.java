@@ -56,11 +56,12 @@ public class SiegeCommand
 		}
 		else //create a new siege
 		{
+			//sender.sendMessage("Expire: "+besiegedTown.immuneExpire/60000+" Current: "+System.currentTimeMillis()/60000+" "+(besiegedTown.getImmuneExpire()/60000-System.currentTimeMillis()/60000));
 			if(!user.siegePriv()) throw new NationsException("Insufficient privilege", "You lack the sufficent rank to declare siege.");
 			if(town.getCoffers() < Econ.SIEGE_FEE) 
 				throw new NationsException("Insufficent funds in town coffers to siege.", "You require "+ChatColor.GREEN+"$"+Econ.SIEGE_FEE+ChatColor.YELLOW+".");
-			if(town.isImmuned())
-				throw new NationsException("That town is currently immuned to siege.", "Immunity expire in "+ChatColor.GOLD+town.getImmuneExpire()+ChatColor.YELLOW+" minutes.");
+			if(besiegedTown.isImmuned())
+				throw new NationsException("That town is currently immuned to siege.", "Immunity expires in "+ChatColor.GOLD+(besiegedTown.getImmuneExpire()/60000-System.currentTimeMillis()/60000)+ChatColor.YELLOW+" minute(s).");
 			town.withdraw(Econ.SIEGE_FEE);
 			siege = new Siege(besiegedTown, town, plugin);
 			if(siege != null && plugin.getConfig().contains("besiegeLighting") && plugin.getConfig().getBoolean("besiegeLighting")) 

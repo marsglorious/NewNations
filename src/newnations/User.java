@@ -166,8 +166,8 @@ public class User
 	public String getName() {return name;}
 	public String getRankedName() 
 	{
-		if(rank == rankType.get("standard")) return ChatColor.GREEN+name;
-		else if(rank == rankType.get("privileged")) return ChatColor.GREEN+"* "+name;
+		if(rank == rankType.get("standard")) return ChatColor.WHITE+name;
+		else if(rank == rankType.get("privileged")) return ChatColor.WHITE+"* "+name;
 		else if(rank == rankType.get("officer")) return ChatColor.LIGHT_PURPLE+"** "+name;
 		else if(rank == rankType.get("leader")) return ChatColor.GOLD+"*#* "+name;
 		else return ChatColor.AQUA+"*?* "+name;

@@ -16,11 +16,13 @@ public class Siege
 	//Constants
 	private static final int    BIG_ENOUGH_INT   = 16 * 1024;
 	private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
-	public static int TRIBUTE_THRESHOLD = 6; //Number of defender deaths before surrender without being able to pay tribute results in looting.
-	public static int IMMUNITY_PERIOD = 120; //in minutes
-	public static int DEATH_LIMIT = -4; //Units of 5 Minutes
-	public static long DEF_LIFE_COUNT = 6, BES_LIFE_COUNT = 5;
-	public static int BATTLE_BUFFER = 10;
+	public static int TRIBUTE_THRESHOLD; //Number of defender deaths before surrender without being able to pay tribute results in looting.
+	public static int IMMUNITY_PERIOD; //in minutes
+	public static int PRELUDE_PERIOD; //in minutes
+	public static int LOOTING_PERIOD; //in minutes
+	public static int DEATH_LIMIT; //Units of 5 Minutes
+	public static long DEF_LIFE_COUNT, BES_LIFE_COUNT;
+	public static int BATTLE_BUFFER ;
 
 	private long maxX, maxZ, minX, minZ;
 	private int defenderLife = 0, besiegerLife = 0, defenderDeathtoll = 0, besiegerDeathtoll = 0;
@@ -39,7 +41,7 @@ public class Siege
 	{
 		if(defender == besieger) return;
 		this.plugin = plugin;
-		
+
 		//Calculate Battlefield Boundary Limits
 		maxX = minX = defender.getPlots().get(0).getX();
 		maxZ = minZ = defender.getPlots().get(0).getZ();
@@ -76,11 +78,12 @@ public class Siege
 		{
 			e.printStackTrace();
 		}
+		defender.setRestoreFee(0); //Reset restoreFee
 		
 		plugin.addSiege(this);
 		
-		defenderBroadcast("You have been besieged by "+ChatColor.RED+defender.getName()+". Prepare for battle.");
-		defender.getNation().notifyText("The town of "+ChatColor.GREEN+defender.getName()+" in your nation has been besieged by "+ChatColor.RED+besieger.getName()+ChatColor.YELLOW+".", defender);
+		defenderBroadcast("You have been besieged by "+ChatColor.RED+defender.getName()+ChatColor.YELLOW+". Prepare for battle.");
+		defender.getNation().notifyText("The town of "+ChatColor.GREEN+defender.getName()+ChatColor.YELLOW+" in your nation has been besieged by "+ChatColor.RED+besieger.getName()+ChatColor.YELLOW+".", defender);
 		besiegerBroadcast("Your town has besieged the town of "+ChatColor.RED+defender.getName()+ChatColor.YELLOW+". Prepare for battle.");
 		besieger.getNation().notifyText("The town of "+ChatColor.GREEN+besieger.getName()+" in your nation has besieged "+ChatColor.RED+besieger.getName()+ChatColor.YELLOW+".", besieger);
 		NewNationsHelper.notifyAll("The town of "+ChatColor.GRAY+defender.getName()+ChatColor.DARK_AQUA+" has been besieged by "+ChatColor.GRAY+besieger.getName()+ChatColor.YELLOW+".");
@@ -130,10 +133,7 @@ public class Siege
 		JSONObject warcampsArray = (JSONObject) obj.get("warcamps"); 
 		JSONObject usersArray = (JSONObject) obj.get("users");
 		for(Object s : defendersArray) addTown(plugin.getTown((String)s));
-		for(Object s : besiegersArray) 
-		{
-			addTown(plugin.getTown((String)s));
-		}
+		for(Object s : besiegersArray) addTown(plugin.getTown((String)s));
 		for(Object s : warcampsArray.keySet()) warcamps.put(plugin.getTown((String)s), decodeLoc((String)warcampsArray.get(s)));
 		for(Object s : usersArray.keySet()) 
 		{
@@ -256,7 +256,7 @@ public class Siege
 	{
 		defenders.get(0).deposit(Econ.SIEGE_FEE);
 		broadcast("The defenders of "+ChatColor.GRAY+defenders.get(0).getName()+ChatColor.YELLOW+" have successfully repelled the besieging force.");
-		broadcast("The siege is lifted and protections are restored. The town is immune to siege for 4 hours");
+		broadcast("The siege is lifted and protections are restored. The town is immuned to siege for "+ChatColor.GREEN+IMMUNITY_PERIOD+ChatColor.YELLOW+" minute(s).");
 		destroy();
 	}
 	private void besiegerVictory()
@@ -272,7 +272,6 @@ public class Siege
 			broadcast("The besiegers are victorious against the defenders of "+ChatColor.GRAY+defenders.get(0).getName()+ChatColor.YELLOW+".");
 			loot();
 		}
-		
 	}
 	
 	public int getDefendersCount()
@@ -297,15 +296,25 @@ public class Siege
 		for(Town t : besiegers) if(t.getNation() != besiegers.get(0).getNation()) t.deposit(Econ.WARCAMP_FEE);
 		
 		int dt = defenderDeathtoll;
-		int tribute = Econ.TRIBUTE + Econ.TRIBUTE * dt * dt * dt; //t + tx^3
+		int tribute = Econ.TRIBUTE + Econ.TRIBUTE * dt * dt; //t + tx^2
 		Town defender = defenders.get(0);
+		
+		if(defenderDeathtoll > TRIBUTE_THRESHOLD) 
+		{
+			broadcast("Since they are unable their high tribute and have taken too many casualties, a looting phase has begun.");
+			loot();
+		}
+		else
+		{
+			defender.withdraw(tribute);
+			besiegers.get(0).deposit(tribute);
+			broadcast("The siege is lifted and protections are returned. The town is now immune to siege for "+IMMUNITY_PERIOD+" minute(s)."); 
+			destroy();
+		}
+		
+		/* 
 		if(defender.getCoffers() < tribute)
 		{
-			if(defenderDeathtoll > TRIBUTE_THRESHOLD) 
-			{
-				broadcast("Since they are unable their high tribute and have taken too many casualties, a looting phase has begun.");
-				loot();
-			}
 			else
 			{
 				int excess = tribute - defender.getCoffers();
@@ -316,20 +325,13 @@ public class Siege
 				destroy();
 			}
 		}
-		else
-		{
-			defender.withdraw(tribute);
-			besiegers.get(0).deposit(tribute);
-			broadcast("The siege is lifted and protections are returned. The town is now immune to siege for "+IMMUNITY_PERIOD+" hour(s)."); 
-			destroy();
-		}
+		*/
 	}
 	
 	public void prelude()
 	{
-		int period = 1;
 		broadcast("The prelude has begun against "+ChatColor.GRAY+defenders.get(0).getName()+ChatColor.YELLOW+".");
-		broadcast("It will last "+period+" minute(s).");
+		broadcast("It will last "+PRELUDE_PERIOD+" minute(s).");
 		
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
 	    {
@@ -351,13 +353,12 @@ public class Siege
 				plugin.onEdit();
 	        }
 	    }
-		,period * 1200); //1200 = minute (variable)
+		, PRELUDE_PERIOD * 1200); //1200 = minute
 	}
 	
 	public void loot()
 	{
-		int period = 1;
-		broadcast("The town is open to plunder and looting for "+period+" minute(s).");
+		broadcast("The town is open to plunder and looting for "+LOOTING_PERIOD+" minute(s).");
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
 	    {
 			public void run()
@@ -369,7 +370,7 @@ public class Siege
 				siege.destroy();
 	        }
 	    }
-		,period * 1200); //1200 = minute
+		, LOOTING_PERIOD * 1200); //1200 = minute
 	}
 	
 	public void update()
@@ -452,7 +453,7 @@ public class Siege
 					}
 					else offlineUserTime.put(u , time + 1);						
 				}
-				else offlineUserTime.put(u , (long) 1);			
+				else offlineUserTime.put(u, (long) 1);			
 			}		
 		}
 	}
@@ -460,7 +461,7 @@ public class Siege
 	public void destroy()
 	{
 		Town defender = defenders.get(0);
-		defender.setImmuneExpire(System.currentTimeMillis() + (IMMUNITY_PERIOD * 6000)); //convert minutes to milliseconds
+		defender.setImmuneExpire(System.currentTimeMillis() + (IMMUNITY_PERIOD * 60000)); //convert minutes to milliseconds
 		defender.setDestruction(false);
 		for(Town town : defenders) removeTown(town);
 		for(Town town : besiegers) removeTown(town);

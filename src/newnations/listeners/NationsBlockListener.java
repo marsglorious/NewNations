@@ -24,14 +24,17 @@ import org.bukkit.inventory.InventoryHolder;
 
 public class NationsBlockListener implements Listener
 {
-	private NewNations plugin;
-	
-	
+	private NewNations plugin;	
+	public int RESTORE_BLOCK_FEE;
+
 	public NationsBlockListener(NewNations plugin)
 	{
 		this.plugin = plugin;
+		RESTORE_BLOCK_FEE = (Integer) plugin.getConfig().get("restoreBlockFee");
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
+
+	private void blockBreak(Town town) {town.increaseRestoreFee(RESTORE_BLOCK_FEE);}
 	
 	public boolean canBreakOrPlaceBlock(Player p, Block b, boolean isBreakEvent)
 	{
@@ -47,7 +50,6 @@ public class NationsBlockListener implements Listener
 		if(siege != null)
 		{
 			if(u != null && siege.getDefenders().contains(u.getTown())) return true;
-
 			BlockState bs = b.getState();
 			if(bs instanceof InventoryHolder && ! (bs instanceof Beacon))
 			{
@@ -98,6 +100,11 @@ public class NationsBlockListener implements Listener
 		Player p = event.getPlayer();
 		Block b = event.getBlock();
 		if(canBreakOrPlaceBlock(p, b, true) == false) event.setCancelled(true);
+		else
+		{
+			Plot plot = plugin.getPlot(b.getLocation());
+			if(plot != null) blockBreak(plot.getTown());
+		}
 	}
 	
 	@EventHandler(ignoreCancelled = true)
@@ -107,7 +114,7 @@ public class NationsBlockListener implements Listener
 		if(event.getAction() == Action.PHYSICAL) return;	
 		Player p = event.getPlayer();
 		Block b = event.getClickedBlock();
-		if(canInteractBlock(p,b, event.getAction()) == false) event.setCancelled(true);
+		if(canInteractBlock(p, b, event.getAction()) == false) event.setCancelled(true);
 	}
 	
 	public boolean canInteractBlock(Player p, Block b, Action a)
@@ -168,7 +175,6 @@ public class NationsBlockListener implements Listener
 					p.sendMessage(ChatColor.RED+"(5) That land is protected during prelude.");
 					return false;
 				}
-				
 				//if the siege isn't a prelude (war or looting phase), allow.
 				return true;
 			}
@@ -192,11 +198,12 @@ public class NationsBlockListener implements Listener
 		List<Block> blocklist = event.blockList();
 		for(int i = 0; i < blocklist.size(); i++)
 		{
-			if(blocklist.get(i).getState() instanceof InventoryHolder) 
+			if(blocklist.get(i).getState() instanceof InventoryHolder) //if block is a chest, remove from terrain damage
 			{
 				blocklist.remove(i);
 				i--;
 			}
+			else blockBreak(p.getTown()); //increase restorefee
 		}
 		Town t = p.getTown();
 		if(t.isDestructionOn()) return;
@@ -226,8 +233,6 @@ public class NationsBlockListener implements Listener
 			if(blockAbove != null && blockAbove.getType() == Material.FIRE) blockAbove.setType(Material.AIR);
 		}		
 	} 
-	
-	
 	
 	// this function cancels the event, so they pistons dont even retract at all
 	@EventHandler

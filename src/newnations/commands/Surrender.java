@@ -35,6 +35,8 @@ public class Surrender {
 					throw new NationsException("Insufficient privilege", "A soldier with siege privilege must give this order, so long as there is one.");
 			}
 		}
+		if(siege.isLooting())
+			throw new NationsException("Your town is in looting phase.", "You cannot surrender during looting.");
 		
 		siege.broadcast(ChatColor.GREEN+town.getName()+ChatColor.YELLOW+" has paid tribute to its besiegers. The siege is lifted.");
 		siege.surrender();

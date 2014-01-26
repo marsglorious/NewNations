@@ -40,8 +40,6 @@ public class Town
 		this.plugin = plug;
 		load(obj, nation);
 	}
-
-	
 	
 	public Town load(JSONObject obj, Nation nation)
 	{
@@ -90,17 +88,9 @@ public class Town
 		return town;
 	}
 	
-	public String getDisplayName()
-	{
-		return ChatColor.GREEN + name + " " + ChatColor.DARK_GREEN + code;
-	}
+	public String getDisplayName() {return ChatColor.GREEN + name + " " + ChatColor.DARK_GREEN + code;}
 	
-	
-	public AccessManager getAccessMan()
-	{
-		return accessMan;
-	}
-	
+	public AccessManager getAccessMan() {return accessMan;}
 	
 	public Plot getPlot(int chunkx, int chunkz, String worldname)
 	{
@@ -352,12 +342,13 @@ public class Town
 	public ArrayList<Siege> getSieges() {return sieges;}
 	public void removeSiege(Siege s) {sieges.remove(s);}
 	public int getRestoreFee() {return (int) restoreFee;}
+	public void increaseRestoreFee(int amount) {restoreFee += amount;}
 	public void setRestoreFee(int restoreFee) {this.restoreFee = restoreFee;}
 	public int getCoffers() {return (int) coffers;}
 	public void setCoffers(int amount) {coffers = amount;}
-	public long getImmuneExpire() {return (immuneExpire / 6000) - (System.currentTimeMillis() / 6000);}
+	public long getImmuneExpire() {return immuneExpire;}
 	public void setImmuneExpire(long immuneExpire) {this.immuneExpire = immuneExpire;}
-	public boolean isImmuned() {return System.currentTimeMillis() > immuneExpire && immuneExpire > 0;}
+	public boolean isImmuned() {return System.currentTimeMillis() < immuneExpire && immuneExpire > 0;}
 	
 	public int withdraw(int amount) 
 	{
@@ -391,14 +382,12 @@ public class Town
 		NewNationsHelper.notifyText(p, "New Town Coffers: "+ChatColor.BLUE+"$"+coffers+ChatColor.YELLOW+".");
 	}
 	
-
 	public String getName() {return name;}
 	
 	public void setName(String newName) throws NationsException 
 	{
 		if(newName.length() > 30)
 			throw new NationsException("Town name too long.", "Town names cannot be longer than 30.");
-		
 		if(!plugin.isNameUnique(newName))
 			throw new NationsException("Town name unavailable.", "A town already exists with that name.");
 		

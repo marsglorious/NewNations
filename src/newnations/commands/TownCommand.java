@@ -500,7 +500,7 @@ public class TownCommand
 		sender.sendMessage(ChatColor.GREEN+"Plots: "+ChatColor.GOLD+town.getPlots().size());
 		sender.sendMessage(ChatColor.GREEN+"Coffers: "+ChatColor.BLUE+"$"+town.getCoffers());
 		sender.sendMessage(ChatColor.GREEN+"Destruction: "+ChatColor.GOLD+(town.isDestructionOn() ? "Enabled" : "Disabled"));
-		
+		sender.sendMessage(ChatColor.GREEN+"Restore Fee: "+ChatColor.RED+"$"+town.getRestoreFee());
 		ArrayList<TownUserInvite> invitesList = plugin.getInviteManager().getUserInvitesForTown(town);
 		sender.sendMessage(ChatColor.GREEN+"User Invites: "+(invitesList.isEmpty() ? ChatColor.GRAY+"None" : ""));
 		for(TownUserInvite invite : invitesList)

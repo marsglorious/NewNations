@@ -53,11 +53,7 @@ public class NewNations extends JavaPlugin
 	public void onEnable()
 	{
 		try 
-		{
-			new NationsUserListener(this);
-			new NationsBlockListener(this);
-			new NationsScheduler(this);
-		
+		{		
 			//Setup ranks
 			User.rankType.put("standard", 0x00);
 			User.rankType.put("privileged", 0x07);
@@ -76,8 +72,11 @@ public class NewNations extends JavaPlugin
 			getConfig().addDefault("siegeDefenderLifeCount", 6);
 			getConfig().addDefault("siegeBesiegerLifeCount", 5);
 			getConfig().addDefault("siegeBuffer", 10);
-			getConfig().addDefault("tributeDeathThreshold", 6);
+			getConfig().addDefault("restoreBlockFee", 2);
+			getConfig().addDefault("tributeDeathThreshold", 5);
 			getConfig().addDefault("immunityPeriod", 120);
+			getConfig().addDefault("siegePreludePeriod", 8);
+			getConfig().addDefault("siegeLootingPeriod", 12);
 			
 			Siege.DEATH_LIMIT = -((Integer) getConfig().get("siegeDeathLimit"));
 			Siege.DEF_LIFE_COUNT = ((Integer) getConfig().get("siegeDefenderLifeCount"));
@@ -85,8 +84,14 @@ public class NewNations extends JavaPlugin
 			Siege.BATTLE_BUFFER = ((Integer) getConfig().get("siegeBuffer"));
 			Siege.TRIBUTE_THRESHOLD = ((Integer) getConfig().get("tributeDeathThreshold"));
 			Siege.IMMUNITY_PERIOD = ((Integer) getConfig().get("immunityPeriod"));
+			Siege.PRELUDE_PERIOD = (Integer) getConfig().get("siegePreludePeriod");
+			Siege.LOOTING_PERIOD = (Integer) getConfig().get("siegeLootingPeriod");
 			
+			new NationsUserListener(this);
+			new NationsBlockListener(this);
+			new NationsScheduler(this);
 			new Econ(this);
+			
 			getConfig().options().copyDefaults(true);		
 			loadAll(); //Load everything up from storage.
 			
