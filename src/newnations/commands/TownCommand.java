@@ -30,7 +30,7 @@ public class TownCommand
 		if(args.length == 0) 
 		{
 			if(user.getTown() == null)
-				throw new NationsException( "You are a wildling, you have no town.", "You can join an existing town or found your own.");
+				throw new NationsException( "You are a wildling, you have no town.", "You can join an existing town or found your own. See '/town help'");
 			else showInfo(sender, args, plugin, user);
 		}
 		//town help

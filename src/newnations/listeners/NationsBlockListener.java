@@ -8,6 +8,7 @@ import newnations.Plot;
 import newnations.Siege;
 import newnations.Town;
 import newnations.User;
+import newnations.PlotLocation;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -189,7 +190,9 @@ public class NationsBlockListener implements Listener
 	public synchronized void onExplosion(EntityExplodeEvent event)
 	{
 		Plot p = plugin.getPlot(event.getLocation());
-		if(p == null) 
+		
+		//if the plot is unclaimed or the town has destruction off, cancel the terrain damage.
+		if(p == null || !p.getTown().isDestructionOn()) 
 		{
 			event.blockList().clear();
 			return;
@@ -198,16 +201,14 @@ public class NationsBlockListener implements Listener
 		List<Block> blocklist = event.blockList();
 		for(int i = 0; i < blocklist.size(); i++)
 		{
-			if(blocklist.get(i).getState() instanceof InventoryHolder) //if block is a chest, remove from terrain damage
-			{
-				blocklist.remove(i);
-				i--;
-			}
+			Block b = blocklist.get(i);
+			
+			//OPTION: Could be better if system check if the plot town is the besieged town.
+			//if the block's plot is unclaimed or the block is a container, exclude that block from terrain damage. 
+			if(plugin.getPlot(new PlotLocation(b.getLocation())) == null || b.getState() instanceof InventoryHolder) 
+				blocklist.remove(i--);
 			else blockBreak(p.getTown()); //increase restorefee
 		}
-		Town t = p.getTown();
-		if(t.isDestructionOn()) return;
-		event.blockList().clear();
 	}
 	
 	@EventHandler

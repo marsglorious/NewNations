@@ -34,8 +34,8 @@ public class AllianceCommand
 		{	
 			Town town = user.getTown();
 			if(town == null)
-				throw new NationsException("You are a wildling, you have no town or nation.", "You can join an existing town or found your own.");
-			NewNationsHelper.notifyText(sender, "Type /alliance help for more information.");
+				throw new NationsException("You are a wildling, you have no town.", "You can join an existing town or found your own. See '/town help'");
+			NewNationsHelper.notifyText(sender, "Type '/alliance help' for more information.");
 			listAlliances();
 			listInvitesReceived();
 			listInvitesSent();

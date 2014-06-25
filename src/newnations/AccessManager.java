@@ -10,7 +10,7 @@ public class AccessManager
 
 	private HashMap<Town, Byte> nationAccess = new HashMap<Town, Byte>();
 	
-	// this is used because when we are laoding the accessManagers the towns have not yet fully loaded yet
+	// this is used because when we are laoding the accessManagers the towns have not yet fully loaded yet,
 	// so what we will do is store the string of the town name and after the load completes we will resolve to the objects
 	
 	private HashMap<String, Byte> nationAccessString ;
@@ -23,11 +23,11 @@ public class AccessManager
 		nationAccessString = new HashMap<String, Byte>();
 		for(Object s : nationAccessList.keySet()) 
 		{
-			long bb = (Long) nationAccessList.get(s);
-			byte accessbyte = (byte) bb;
-			String towname2 = (String)s;
+			long tempAByte = (Long) nationAccessList.get(s);
+			byte accessByte = (byte) tempAByte;
+			String townName = (String) s;
 			
-			nationAccessString.put(towname2, accessbyte);
+			nationAccessString.put(townName, accessByte);
 		}
 	}
 	
@@ -35,10 +35,10 @@ public class AccessManager
 	public void reconnectStrings(NewNations plugin)
 	{
 		if(nationAccessString == null) return;
-		for(String towname2 : nationAccessString.keySet())
+		for(String townName : nationAccessString.keySet())
 		{
-			Town thisTown = plugin.getTown(towname2);
-			if(thisTown != null ) nationAccess.put(thisTown, nationAccessString.get(towname2));
+			Town thisTown = plugin.getTown(townName);
+			if(thisTown != null ) nationAccess.put(thisTown, nationAccessString.get(townName));
 		}
 		
 		//Don't need these anymore
