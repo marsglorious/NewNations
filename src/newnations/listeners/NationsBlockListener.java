@@ -45,7 +45,7 @@ public class NationsBlockListener implements Listener
 		
 		AccessManager plotAccess = plotTown.getAccessMan();
 		User u = plugin.getUser(p);
-		if( u != null && u.getTown() == plotTown ) return true;
+		if(u != null && u.getTown() == plotTown ) return true;
 		Siege siege = plugin.getSiege(plotTown);
 
 		if(siege != null)
@@ -54,11 +54,11 @@ public class NationsBlockListener implements Listener
 			BlockState bs = b.getState();
 			if(bs instanceof InventoryHolder && ! (bs instanceof Beacon))
 			{
-				if(u != null && plotAccess.containerAccess(u.getTown()) && plotAccess.blockAccess(u.getTown())) return true;
+				if(u != null && u.getTown() != null && plotAccess.containerAccess(u.getTown()) && plotAccess.blockAccess(u.getTown())) return true;
 				if(!siege.isLooting())
 				{
 					//don't place chests
-					if(isBreakEvent == false) return false;
+					//if(isBreakEvent == false) return false;
 					if(plot.saveChest(b))
 					{					
 						p.sendMessage(ChatColor.RED+"You will get nothing outside of the looting phase.");
@@ -70,7 +70,7 @@ public class NationsBlockListener implements Listener
 				else return true;
 			}
 			else //block is NOT a container
-				if(u != null && plotAccess.blockAccess(u.getTown())) return true;
+				if(u != null && u.getTown() != null && plotAccess.blockAccess(u.getTown())) return true;
 			
 			if(!siege.isPrelude()) return true;
 			p.sendMessage(ChatColor.RED+"(4) Land is protected during the prelude.");
@@ -80,8 +80,8 @@ public class NationsBlockListener implements Listener
 		{
 			BlockState bs = b.getState();
 			if(bs instanceof InventoryHolder)
-				if(u != null && plotAccess.containerAccess(u.getTown()) && plotAccess.blockAccess(u.getTown())) return true;
-			else if(u != null &&  plotAccess.blockAccess(u.getTown())) return true;
+				if(u != null && u.getTown() != null && plotAccess.containerAccess(u.getTown()) && plotAccess.blockAccess(u.getTown())) return true;
+			else if(u != null && u.getTown() != null && plotAccess.blockAccess(u.getTown())) return true;
 		}
 		p.sendMessage(ChatColor.RED+"(3) That land is protected.");
 		return false;
