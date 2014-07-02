@@ -17,57 +17,7 @@ public class Nadmin {
 
 	public Nadmin(CommandSender sender, String cmdLabel, String[] args, NewNations plugin) throws NationsException
 	{
-		// TODO Auto-generated constructor stub
-		
-		// this command allows proxying as a user (without the slash)
-		//  /nadmin proxy playername [command] [args] 
-		// TODO: add permissions checks
-		
-		/*
-		
-		//remove this
-		Plot plot = plugin.getTown("gayland").getPlots().get(0);
-		System.out.println(plot.getRestore());
-		World world = plugin.getServer().getWorld(plugin.getTown("gayland").getWorldName());
-		//Chunk c = world.getChunkAt((int)plot.getX(), (int)plot.getZ());
-		try {
-			plot.saveChest((Chest)world.getBlockAt(354, 70, 397).getState());
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		/*
-		
-		/*
-		String directory = "plugins/NewNations/restores/";
-		Map<String, Tag> schematic;
-		try {schematic = load(directory + "world;22;24.schematic");} 
-		catch(Exception e) 
-		{
-			System.out.println("Plot schematic missing.");
-			return;
-		}
-		System.out.println(schematic.get("TileEntities"));
-		try {
-		HashMap<String, Tag> values = new HashMap<String, Tag>();
-	    values.put("id", new StringTag("id", "Chest"));
-	    values.put("x", new IntTag("x", 5));
-	    values.put("y", new IntTag("y", 6));
-	    values.put("z", new IntTag("z", 7));
-		 
-	    ArrayList<Tag> chests = new ArrayList<Tag>(NBTUtils.getChildTag(schematic, "TileEntities", ListTag.class).getValue());
-	    chests.add(new CompoundTag("TileEntity", values));
-		
-	    HashMap<String, Tag> newSchematic = new HashMap<String, Tag>(schematic);
-		newSchematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, chests));
-		System.out.println(newSchematic.get("TileEntities"));
-		} catch(Exception e) {e.printStackTrace();}
-		*/
-		
-		
-		
-		
-		
+			
 		if(args.length >= 2 && args[0].equalsIgnoreCase("proxy"))
 		{
 			this.proxy(sender ,cmdLabel ,args, plugin);

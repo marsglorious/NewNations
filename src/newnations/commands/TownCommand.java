@@ -264,6 +264,7 @@ public class TownCommand
 		if(plugin.getInviteManager().removeUserInviteFromTown(town, args[1] ))
 		{
 			NewNationsHelper.notifyText(sender, ChatColor.RED+args[1]+ChatColor.YELLOW+" has been uninvited.");
+			plugin.onEdit();
 		}
 		else
 			throw new NationsException("User with that name is not invited to your town.", null);	
@@ -288,6 +289,7 @@ public class TownCommand
 				acceptTown.notifyText(ChatColor.GREEN+user.getName()+ChatColor.YELLOW+" has joined this town.", user);
 				//inform the user.
 				NewNationsHelper.notifyText(sender, "You have joined the town of "+ChatColor.GREEN+acceptTown.getName()+ChatColor.YELLOW+".");
+				plugin.onEdit();
 				return;
 			}
 		}
@@ -302,6 +304,7 @@ public class TownCommand
 			throw new NationsException("You cannot set your spawn here.", "You can only set your spawn in your own town.");
 		user.setSpawn(player.getLocation());
 		NewNationsHelper.notifyText(sender, "You have set your spawn to your current location.");
+		plugin.onEdit();
 		//TODO: potentially notify everyone in the town of this.
 	}
 	
@@ -322,16 +325,21 @@ public class TownCommand
 		rankee.setRank(rank);
 		NewNationsHelper.notifyText(sender, ChatColor.GREEN+rankee.getName()+ChatColor.YELLOW+"'s rank successfully changed to "+ChatColor.GREEN+args[2]+ChatColor.YELLOW+".");
 		rankee.notifyUser("Your rank has been changed to "+ChatColor.GREEN+args[2]+ChatColor.YELLOW+".");
+		plugin.onEdit();
 	}
 	
 	private void deposit(CommandSender sender, String[] args, NewNations plugin, User user) throws NationsException
-		{user.getTown().deposit((Player)sender, Double.parseDouble(args[1]));}
+	{
+		user.getTown().deposit((Player)sender, Double.parseDouble(args[1]));
+		plugin.onEdit();
+	}
 	
 	private void withdraw(CommandSender sender, String[] args, NewNations plugin, User user) throws NationsException
 	{
 		if(!user.moneyPriv()) throw new NationsException("Insufficient privilege", "You lack the sufficent rank to withdraw from the town coffers.");
 		//TODO: add cash priv
 		user.getTown().withdraw((Player)sender, Double.parseDouble(args[1]));
+		plugin.onEdit();
 	}
 	
 	private void destruction(CommandSender sender, String[] args, NewNations plugin, User user) throws NationsException
@@ -348,7 +356,8 @@ public class TownCommand
 		Town town = user.getTown();
 		String townName = NewNationsHelper.connectStrings(args, 1);
 		town.setName(townName);
-		town.notifyText("The town have been renamed to "+ChatColor.GREEN+town.getName()+ChatColor.YELLOW+".",  null);
+		town.notifyText("The town have been renamed to "+ChatColor.GREEN+town.getName()+ChatColor.YELLOW+".", null);
+		plugin.onEdit();
 	}
 	
 	private void recode(CommandSender sender, String[] args, NewNations plugin, User user) throws NationsException
@@ -358,6 +367,7 @@ public class TownCommand
 		//TODO should numbers be allowed?
 		user.getTown().setCode(args[1].toUpperCase());
 		user.getTown().notifyText("Your town's code is now "+ChatColor.DARK_BLUE+user.getTown().getCode()+ChatColor.YELLOW+".", null);
+		plugin.onEdit();
 	}
 	
 	private void restore(CommandSender sender, String[] args, NewNations plugin, User user) throws NationsException
@@ -394,6 +404,7 @@ public class TownCommand
 			sieges.get(i).removeUser(user);
 			sieges.get(i).defenderBroadcast(ChatColor.RED+user.getName()+ChatColor.YELLOW+" has been removed from the siege.");	
 		}
+		plugin.onEdit();
 	}
 	private void leave(CommandSender sender, String[] args, NewNations plugin, User user) throws NationsException
 	{
@@ -410,6 +421,7 @@ public class TownCommand
 			s.removeUser(user);
 			s.defenderBroadcast(ChatColor.RED+user.getName()+ChatColor.YELLOW+" has been removed from the siege.");
 		}
+		plugin.onEdit();
 	}
 	
 	private void disband(CommandSender sender, String[] args, NewNations plugin, User user) throws NationsException
@@ -426,7 +438,8 @@ public class TownCommand
 			s.broadcast(ChatColor.RED+town.getName()+ChatColor.YELLOW+" has been removed from the siege.");
 		}
 		town.destroy();
-		town.withdraw(p, town.getCoffers() );
+		town.withdraw(p, town.getCoffers());
+		plugin.onEdit();
 	}
 	
 	public void relocate(CommandSender sender, String[] args, NewNations plugin, User user) throws NationsException

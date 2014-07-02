@@ -205,6 +205,7 @@ public class NationCommand
 			accessee.notifyText("Your town now has container access to "+ChatColor.GREEN+user.getTown().getName()+ChatColor.YELLOW+".", null);
 		}
 		else throw new NationsException("No such access", "The access key can only be either: none, switch, block, container");
+		plugin.onEdit();
 	}
 	
 	public void uninvite() throws NationsException
@@ -223,6 +224,7 @@ public class NationCommand
 			{
 				invite.invalidate();
 				NewNationsHelper.notifyText(sender, ChatColor.GREEN+uninvitee.getName()+ChatColor.YELLOW+" uninvited.");
+				plugin.onEdit();
 				return;
 			}
 		}
@@ -245,6 +247,7 @@ public class NationCommand
 		nation = new Nation(plugin, town);
 		town.switchNation(nation);
 		NewNationsHelper.notifyAll("The nation of "+ChatColor.GREEN+nation.getName()+ChatColor.YELLOW+" has been founded.");
+		plugin.onEdit();
 	}
 	
 	public void leave() throws NationsException
@@ -257,6 +260,7 @@ public class NationCommand
 		nation = new Nation(plugin, town);
 		town.switchNation(nation);
 		NewNationsHelper.notifyAll("The nation of "+ChatColor.GREEN+nation.getName()+ChatColor.YELLOW+" has been founded.");
+		plugin.onEdit();
 	}
 	
 	public void capital() throws NationsException
@@ -274,6 +278,7 @@ public class NationCommand
 			throw new NationsException("Unable to transfer capital status.", "Your town is not the capital. You cannot transfer capital status if you aren't a capital.");
 		nation.setCapital(newTown);
 		nation.notifyText("The new capital of "+ChatColor.GREEN+nation.getName()+ChatColor.YELLOW+" is "+ChatColor.GREEN+newTown.getName()+ChatColor.YELLOW+".", null);
+		plugin.onEdit();
 	}
 	
 	private void recode(CommandSender sender, String[] args, NewNations plugin, User user) throws NationsException
@@ -339,9 +344,9 @@ public class NationCommand
 		sender.sendMessage(ChatColor.GOLD+"Nation List:");
 		for(Nation n : plugin.nations)
 		{
-			sender.sendMessage(ChatColor.GREEN+"Nations:" + n.getDisplayName());
+			sender.sendMessage(ChatColor.GREEN+"Nations: " + n.getDisplayName());
 			for(Town t : n.getTowns())
-				sender.sendMessage(ChatColor.GREEN+"  Town:" + t.getDisplayName() + "  **");
+				sender.sendMessage(ChatColor.GREEN+"  Town: " + t.getDisplayName() + "  **");
 		}
 	}
 	

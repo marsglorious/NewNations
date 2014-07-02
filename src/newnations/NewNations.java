@@ -215,7 +215,7 @@ public class NewNations extends JavaPlugin
 					double dist = Math.sqrt(Math.pow(p.getX() - plotLoc.getChunkX(), 2) + Math.pow(p.getZ() - plotLoc.getChunkZ(), 2));
 					if(dist < closest) closest = dist;
 				}
-				totalcost += NewNationsHelper.plotCostFunction( t.getPlots().size(), closest);
+				totalcost += NewNationsHelper.plotCostFunction(t.getPlots().size(), closest);
 			}
 		}
 		return (int)totalcost;
@@ -480,7 +480,7 @@ public class NewNations extends JavaPlugin
 		return null;
 	}
 	
-	public InviteManager getInviteManager() { return inviteMan;}
+	public InviteManager getInviteManager() {return inviteMan;}
 	
 	/**
      * Gets a list if Sieges that are taking place at the given chunk co ords

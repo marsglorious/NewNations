@@ -54,7 +54,7 @@ public class User
 	 * leader = LPISMRDC -> 0xFF
 	 * officer = lPISMRDC -> 0x7F
 	 * privileged = lpismRDC -> 0x07
-	 * standard = lpismrdc
+	 * standard = lpismrdc -> 0x00
 	 * 
 	 * CBS
 	 * (C)ontainer - Access chest, etc.
@@ -102,7 +102,7 @@ public class User
 			rank = (int) temp;
 		}
 		
-		this.town = town; 
+		this.town = town;
 	}
 	
 	public JSONObject save()
